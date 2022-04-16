@@ -7,6 +7,12 @@ import { UserModel } from '../models';
 const authRoute = Router();
 
 authRoute.post('/register', async (req, res) => {
+    let result = {
+        success: false,
+        message: null,
+        data: null
+    }
+
     try {
         const {error} = registerValidation(req.body);
         if(error) throw new Error( error.message);
@@ -33,10 +39,13 @@ authRoute.post('/register', async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error
-        })
+        result.message = error;
+
+        if(error instanceof Error) {
+            result.message = error.message;
+        }
+        
+        res.status(400).json(result)
     }
 })
 

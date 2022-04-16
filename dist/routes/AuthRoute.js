@@ -24,49 +24,54 @@ var _models = require("../models");
 var authRoute = (0, _express.Router)();
 authRoute.post('/register', /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res) {
-    var _registerValidation, error, emailExists, salt, hashedPassword, user;
+    var result, _registerValidation, error, emailExists, salt, hashedPassword, user;
 
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.prev = 0;
+            result = {
+              success: false,
+              message: null,
+              data: null
+            };
+            _context.prev = 1;
             _registerValidation = (0, _validations.registerValidation)(req.body), error = _registerValidation.error;
 
             if (!error) {
-              _context.next = 4;
+              _context.next = 5;
               break;
             }
 
             throw new Error(error.message);
 
-          case 4:
-            _context.next = 6;
+          case 5:
+            _context.next = 7;
             return _models.UserModel.findOne({
               email: req.body.email
             });
 
-          case 6:
+          case 7:
             emailExists = _context.sent;
 
             if (!emailExists) {
-              _context.next = 9;
+              _context.next = 10;
               break;
             }
 
             throw new Error('Email address already exists');
 
-          case 9:
+          case 10:
             salt = _bcryptjs["default"].genSaltSync(10);
             hashedPassword = _bcryptjs["default"].hashSync(req.body.password, salt);
-            _context.next = 13;
+            _context.next = 14;
             return _models.UserModel.create({
               name: req.body.name,
               email: req.body.email,
               password: hashedPassword
             });
 
-          case 13:
+          case 14:
             user = _context.sent;
             res.json({
               success: true,
@@ -77,23 +82,26 @@ authRoute.post('/register', /*#__PURE__*/function () {
                 email: user.email
               }
             });
-            _context.next = 20;
+            _context.next = 23;
             break;
 
-          case 17:
-            _context.prev = 17;
-            _context.t0 = _context["catch"](0);
-            res.status(400).json({
-              success: false,
-              message: _context.t0
-            });
+          case 18:
+            _context.prev = 18;
+            _context.t0 = _context["catch"](1);
+            result.message = _context.t0;
 
-          case 20:
+            if (_context.t0 instanceof Error) {
+              result.message = _context.t0.message;
+            }
+
+            res.status(400).json(result);
+
+          case 23:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 17]]);
+    }, _callee, null, [[1, 18]]);
   }));
 
   return function (_x, _x2) {

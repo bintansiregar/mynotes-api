@@ -4,7 +4,7 @@ import { authenticateUser } from '../helper';
 
 const userRoute = Router();
 
-userRoute.get('/', authenticateUser, async (req, res) => {console.log(req.userId)
+userRoute.get('/', authenticateUser, async (req, res) => {
     const result = await User.getAll();
 
     res.json(result);

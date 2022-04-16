@@ -7,20 +7,16 @@ import { UserModel } from '../models';
 const authRoute = Router();
 
 authRoute.post('/register', async (req, res) => {
-    const {error} = registerValidation(req.body);
-    if(error) {
-        res.status(400).json({success: false, message: error.message});
-        
-        return;
-    }
-
-    const emailExists = await UserModel.findOne({ email: req.body.email });
-    if(emailExists) return res.status(400).json({ success: false, message: 'Email address already exists'});
-
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
     try {
+        const {error} = registerValidation(req.body);
+        if(error) throw new Error( error.message);
+
+        const emailExists = await UserModel.findOne({ email: req.body.email });
+        if(emailExists) throw new Error ('Email address already exists');
+
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+        
         const user = await UserModel.create({
             name: req.body.name,
             email: req.body.email,
